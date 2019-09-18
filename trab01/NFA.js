@@ -32,7 +32,7 @@ module.exports = class NonDeterministcFiniteAutomata {
         EPSILON,
         currentState
       )) {
-        if (nextState.test("", visited)) {
+        if (this.test("", nextState, visited)) {
           return true;
         }
       }
