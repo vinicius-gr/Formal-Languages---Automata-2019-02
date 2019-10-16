@@ -23,6 +23,7 @@ Conceal.parse = function (id) {
     return Conceal._list[id];
 };
 
+
 var DFA = function (alphabet, initialState) {
     this.initialState = initialState;
     this.finalStates = new Set();
@@ -101,6 +102,8 @@ DFA.prototype._fromNFA = function (nfa) {
 
         return states;
     };
+
+
 
     this.alphabet = nfa.alphabet;
     console.log(this.alphabet);
