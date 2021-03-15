@@ -70,7 +70,7 @@ document.getElementById("playBtn").addEventListener("click", (event) => {
     const { nodes, links } = Graph.graphData();
     nodes[0].active = true;
     Graph.graphData({
-      nodes: nodes,
+      nodes: [...nodes],
       links: [...links],
     });
     Graph.nodeThreeObject(Graph.nodeThreeObject());
