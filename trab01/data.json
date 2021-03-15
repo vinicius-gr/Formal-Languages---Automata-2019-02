@@ -1,0 +1,81 @@
+{
+  "nodes": [
+    { "id": "q0", "type": "start", "active": true },
+    { "id": "q1", "type": "", "active": false },
+    { "id": "q2", "type": "", "active": false },
+    { "id": "q3", "type": "", "active": false },
+    { "id": "q4", "type": "end", "active": false }
+  ],
+  "links": [
+    {
+      "source": "q0",
+      "target": "q1",
+      "curvature": "0.5",
+      "rotation": "0",
+      "value": "0"
+    },
+    {
+      "source": "q0",
+      "target": "q0",
+      "curvature": "1",
+      "rotation": "0",
+      "value": "1"
+    },
+    {
+      "source": "q1",
+      "target": "q2",
+      "curvature": "0",
+      "rotation": "0",
+      "value": "0"
+    },
+    {
+      "source": "q1",
+      "target": "q0",
+      "curvature": "0.5",
+      "rotation": "0",
+      "value": "1"
+    },
+    {
+      "source": "q2",
+      "target": "q2",
+      "curvature": "1",
+      "rotation": "3",
+      "value": "0"
+    },
+    {
+      "source": "q2",
+      "target": "q3",
+      "curvature": "0",
+      "rotation": "0",
+      "value": "1"
+    },
+    {
+      "source": "q3",
+      "target": "q1",
+      "curvature": "0",
+      "rotation": "0",
+      "value": "0"
+    },
+    {
+      "source": "q3",
+      "target": "q4",
+      "curvature": "0",
+      "rotation": "0",
+      "value": "1"
+    },
+    {
+      "source": "q4",
+      "target": "q4",
+      "curvature": "-1",
+      "rotation": "0",
+      "value": "0"
+    },
+    {
+      "source": "q4",
+      "target": "q4",
+      "curvature": "1",
+      "rotation": "0",
+      "value": "1"
+    }
+  ]
+}
