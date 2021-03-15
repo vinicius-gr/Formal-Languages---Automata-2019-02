@@ -9,7 +9,10 @@ const Graph = ForceGraph3D({
   .linkCurvature("curvature")
   .linkCurveRotation("rotation")
   .linkOpacity(0.5)
-  .linkDirectionalParticles(4)
+  .linkWidth((link) => {
+    return link.active ? 1 : 0.1;
+  })
+  .linkDirectionalParticles(2)
   .linkLabel((link) => {
     return link.value;
   })
@@ -17,7 +20,7 @@ const Graph = ForceGraph3D({
     const nodeEl = document.createElement("div");
     nodeEl.textContent = node.id;
     nodeEl.style.color = "#fff";
-    node.color = node.active ? "rgba(255, 150, 0, 1)" : node.color;
+    node.color = node.active ? "rgba(255, 100, 100, 1)" : node.color;
     nodeEl.style.fontFamily = "Verdana";
     return new THREE.CSS2DObject(nodeEl);
   })
@@ -25,9 +28,9 @@ const Graph = ForceGraph3D({
   .linkThreeObjectExtend(true)
   .linkThreeObject((link) => {
     // extend link with text sprite
-    console.log(link);
     const sprite = new SpriteText(`${link.value}`);
     sprite.color = "lightgrey";
+    console.log(sprite);
     sprite.textHeight = 6;
     return sprite;
   })
@@ -69,10 +72,8 @@ document.getElementById("playBtn").addEventListener("click", (event) => {
 
     const { nodes, links } = Graph.graphData();
     nodes[0].active = true;
-    Graph.graphData({
-      nodes: [...nodes],
-      links: [...links],
-    });
+    links[0].active = true;
+    Graph.graphData({ nodes, links });
     Graph.nodeThreeObject(Graph.nodeThreeObject());
   }
 });

@@ -1,6 +1,6 @@
 {
   "nodes": [
-    { "id": "q0", "type": "start", "active": true },
+    { "id": "q0", "type": "start", "active": false },
     { "id": "q1", "type": "", "active": false },
     { "id": "q2", "type": "", "active": false },
     { "id": "q3", "type": "", "active": false },
@@ -12,70 +12,80 @@
       "target": "q1",
       "curvature": "0.5",
       "rotation": "0",
-      "value": "0"
+      "value": "0",
+      "active": false
     },
     {
       "source": "q0",
       "target": "q0",
       "curvature": "1",
       "rotation": "0",
-      "value": "1"
+      "value": "1",
+      "active": false
     },
     {
       "source": "q1",
       "target": "q2",
       "curvature": "0",
       "rotation": "0",
-      "value": "0"
+      "value": "0",
+      "active": false
     },
     {
       "source": "q1",
       "target": "q0",
       "curvature": "0.5",
       "rotation": "0",
-      "value": "1"
+      "value": "1",
+      "active": false
     },
     {
       "source": "q2",
       "target": "q2",
       "curvature": "1",
       "rotation": "3",
-      "value": "0"
+      "value": "0",
+      "active": false
     },
     {
       "source": "q2",
       "target": "q3",
       "curvature": "0",
       "rotation": "0",
-      "value": "1"
+      "value": "1",
+      "active": false
     },
     {
       "source": "q3",
       "target": "q1",
       "curvature": "0",
       "rotation": "0",
-      "value": "0"
+      "value": "0",
+      "active": false
     },
     {
       "source": "q3",
       "target": "q4",
       "curvature": "0",
       "rotation": "0",
-      "value": "1"
+      "value": "1",
+      "active": false
     },
     {
       "source": "q4",
       "target": "q4",
       "curvature": "-1",
       "rotation": "0",
-      "value": "0"
+      "value": "0",
+      "active": false
     },
     {
       "source": "q4",
       "target": "q4",
       "curvature": "1",
       "rotation": "0",
-      "value": "1"
+      "value": "1",
+      "active": false
     }
   ]
 }
