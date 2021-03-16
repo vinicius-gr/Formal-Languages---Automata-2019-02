@@ -1,10 +1,23 @@
-module.exports = class DeterministcFiniteAutomata {
-  constructor(Q, E, D, q0, F) {
+export class DeterministcFiniteAutomata {
+  constructor({
+    states: Q,
+    alphabet: E,
+    transitions: D,
+    start: q0,
+    acceptanceStates: F,
+  }) {
     this.states = Q;
     this.alphabet = E;
     this.transition = D;
     this.start = q0;
     this.accepts = F;
+  }
+
+  move(currentState, input) {
+    if (!this.alphabet.includes(input)) {
+      return undefined;
+    }
+    return this.transition[currentState][input];
   }
 
   test(w) {
@@ -25,4 +38,4 @@ module.exports = class DeterministcFiniteAutomata {
 
     return false;
   }
-};
+}

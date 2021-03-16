@@ -1,21 +1,23 @@
+import { DeterministcFiniteAutomata } from "../automatas/DFA.js";
+import { dfaRawData } from "../db/data.js";
+import { treatRawData, sleep } from "../utils/index.js";
+
 const Graph = ForceGraph3D({
   extraRenderers: [new THREE.CSS2DRenderer()],
 })(document.getElementById("3d-graph"))
-  .jsonUrl("./data.json")
+  .graphData(treatRawData(dfaRawData))
+  .linkDirectionalArrowLength(3.5)
+  .linkDirectionalArrowRelPos(0.5)
+  .linkCurvature(0.8)
   .nodeLabel("id")
   .nodeAutoColorBy("type")
   .nodeRelSize(8)
   .nodeResolution(16)
-  .linkCurvature("curvature")
-  .linkCurveRotation("rotation")
   .linkOpacity(0.5)
   .linkWidth((link) => {
     return link.active ? 1 : 0.1;
   })
-  .linkDirectionalParticles(2)
-  .linkLabel((link) => {
-    return link.value;
-  })
+  .linkLabel((link) => link.value)
   .nodeThreeObject((node) => {
     const nodeEl = document.createElement("div");
     nodeEl.textContent = node.id;
@@ -30,7 +32,6 @@ const Graph = ForceGraph3D({
     // extend link with text sprite
     const sprite = new SpriteText(`${link.value}`);
     sprite.color = "lightgrey";
-    console.log(sprite);
     sprite.textHeight = 6;
     return sprite;
   })
@@ -63,17 +64,23 @@ const Graph = ForceGraph3D({
 // Spread nodes a little wider
 Graph.d3Force("charge").strength(-150);
 
-document.getElementById("playBtn").addEventListener("click", (event) => {
+document.getElementById("playBtn").addEventListener("click", async (event) => {
   const input = document.getElementById("word");
   if (input.value !== "") {
-    console.log(input.value);
-    const word = input.value.split("");
-    console.log(word);
-
+    const DFA = new DeterministcFiniteAutomata(dfaRawData);
     const { nodes, links } = Graph.graphData();
-    nodes[0].active = true;
-    links[0].active = true;
+    const currState = { id: "S0", index: 0 };
+    nodes[currState.index].active = true;
     Graph.graphData({ nodes, links });
     Graph.nodeThreeObject(Graph.nodeThreeObject());
+    for (let letter of input.value.split("")) {
+      await sleep(2000);
+      const nextState = DFA.move(currState.id, letter);
+      currState.id = nextState;
+      currState.index = nodes.findIndex((item) => item.id === nextState);
+      nodes[currState.index].active = true;
+      Graph.graphData({ nodes, links });
+      Graph.nodeThreeObject(Graph.nodeThreeObject());
+    }
   }
 });

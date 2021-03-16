@@ -1,4 +1,4 @@
-{
+export const dfaRawData = {
     "states": [
         "S0",
         "S1",
