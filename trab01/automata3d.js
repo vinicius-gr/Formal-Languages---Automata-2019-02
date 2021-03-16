@@ -7,7 +7,6 @@ const Graph = ForceGraph3D({
   .nodeRelSize(8)
   .nodeResolution(16)
   .linkCurvature("curvature")
-  .linkCurveRotation("rotation")
   .linkOpacity(0.5)
   .linkWidth((link) => {
     return link.active ? 1 : 0.1;

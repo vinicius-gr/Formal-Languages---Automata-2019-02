@@ -13,9 +13,9 @@ fetch("/data.json")
       .linkSource("source")
       .linkTarget("target")
       .linkCurvature("curvature")
-      .linkDirectionalParticles(2)
-      // .linkDirectionalArrowLength(6)
-      .linkDirectionalParticleSpeed(0.005)
+      // .linkDirectionalParticles(2)
+      // .linkDirectionalParticleSpeed(0.005)
+      .linkDirectionalArrowLength(6)
       .nodeCanvasObject((node, ctx) => {
         ctx.beginPath();
         ctx.fillStyle = node.color;
@@ -47,11 +47,13 @@ fetch("/data.json")
           }))
         );
         if (link.curvature === "0.5") {
-          textPos = Object.assign(
-            ...["x", "y"].map((c) => ({
-              [c]: start[c] + (end[c] - start[c]) / 2, // calc middle point
-            }))
+          const c = Math.atan2(
+            start.y + (start.y - end.y) / 2,
+            start.x + (start.x - start.y) / 2
           );
+          const x = link.curvature * Math.cos(c);
+          const y = link.curvature * Math.sin(c);
+          textPos = { x, y };
         }
 
         if (link.curvature === "1" || link.curvature === "-1") {
@@ -102,7 +104,15 @@ fetch("/data.json")
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = "darkgrey";
-        ctx.fillText(label, 0, link.curvature * 10);
+        ctx.fillText(
+          label,
+          0,
+          (link.source.x < 0 && link.target.x < 0) ||
+            (link.target.y < 0 && link.target.y < 0)
+            ? -10
+            : 10
+        );
+
         ctx.restore();
       });
   });
