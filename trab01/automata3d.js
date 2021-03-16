@@ -8,10 +8,11 @@ const Graph = ForceGraph3D({
   .nodeResolution(16)
   .linkCurvature("curvature")
   .linkOpacity(0.5)
+  // .linkDirectionalArrowLength(6)
   .linkWidth((link) => {
     return link.active ? 1 : 0.1;
   })
-  .linkDirectionalParticles(2)
+  .linkDirectionalParticles(3)
   .linkLabel((link) => {
     return link.value;
   })
