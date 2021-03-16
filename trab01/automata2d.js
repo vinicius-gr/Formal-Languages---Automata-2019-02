@@ -30,7 +30,7 @@ fetch("/data.json")
         ctx.stroke();
       })
       .linkCanvasObjectMode(() => "after")
-      .linkCanvasObject((link, ctx) => {
+      .linkCanvasObject((link, ctx, scale) => {
         const MAX_FONT_SIZE = 8;
         const LABEL_NODE_MARGIN = Graph.nodeRelSize() * 1.5;
 
@@ -102,7 +102,7 @@ fetch("/data.json")
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = "darkgrey";
-        ctx.fillText(label, 0, 0);
+        ctx.fillText(label, 0, link.curvature * 10);
         ctx.restore();
       });
   });
