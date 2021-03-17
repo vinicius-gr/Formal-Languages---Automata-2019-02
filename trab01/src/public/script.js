@@ -13,13 +13,11 @@ const Graph = ForceGraph3D({
   .nodeAutoColorBy("type")
   .nodeRelSize(8)
   .nodeResolution(16)
-  .linkCurvature("curvature")
   .linkOpacity(0.5)
-  .linkDirectionalArrowLength(6)
   .linkWidth((link) => {
     return link.active ? 1 : 0.1;
   })
-  // .linkDirectionalParticles(3)
+  .linkLabel((link) => link.value)
   .nodeThreeObject((node) => {
     const nodeEl = document.createElement("div");
     nodeEl.textContent = node.id;

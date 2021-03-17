@@ -1,12 +1,12 @@
 "use strict";
 
 const DeterministcFiniteAutomata = require("./DFA.js");
-const NonDeterministcFiniteAutomata = require("./NFA.js");
-const toDFA = require("./NFAtoDFA.js");
+const NonDeterministcFiniteAutomata = require("../automatas/NFA.js");
+const toDFA = require("../automatas/NFAtoDFA.js");
 
+const automataType = process.argv[2];
 const DataLocation = process.argv[3];
 const analiseWord = process.argv[4];
-const automataType = process.argv[2];
 
 const data = require(DataLocation);
 
