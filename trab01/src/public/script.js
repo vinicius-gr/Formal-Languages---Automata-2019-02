@@ -1,68 +1,85 @@
 import { DeterministcFiniteAutomata } from "../automatas/DFA.js";
 import { dfaRawData } from "../db/data.js";
-import { treatRawData, sleep } from "../utils/index.js";
+import { treatRawData, sleep, getQuadraticXY } from "../utils/index.js";
 
-const Graph = ForceGraph3D({
-  extraRenderers: [new THREE.CSS2DRenderer()],
-})(document.getElementById("3d-graph"))
+let Graph = {};
+Graph = ForceGraph()(document.getElementById("graph"))
   .graphData(treatRawData(dfaRawData))
-  .linkDirectionalArrowLength(3.5)
-  .linkDirectionalArrowRelPos(0.5)
-  .linkCurvature(0.8)
-  .nodeLabel("id")
+  .backgroundColor("#000")
+  .nodeId("id")
   .nodeAutoColorBy("type")
-  .nodeRelSize(8)
-  .nodeResolution(16)
-  .linkOpacity(0.5)
-  .linkWidth((link) => {
-    return link.active ? 1 : 0.1;
+  .linkColor(() => "darkgrey")
+  .linkSource("source")
+  .linkTarget("target")
+  .linkCurvature("curvature")
+  // .linkDirectionalParticles(3)
+  // .linkDirectionalParticleSpeed(0.005)
+  .linkDirectionalArrowLength(6)
+  .nodeCanvasObject((node, ctx) => {
+    ctx.beginPath();
+    ctx.fillStyle = node.color;
+    ctx.arc(node.x, node.y, 9, 0, 2 * Math.PI, false);
+    ctx.fill();
+    ctx.strokeStyle = "#000";
+    ctx.font = "8px Verdana";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "white";
+    ctx.textBaseline = "middle";
+    ctx.fillText(node.id, node.x, node.y);
+    ctx.stroke();
   })
-  .linkLabel((link) => link.value)
-  .nodeThreeObject((node) => {
-    const nodeEl = document.createElement("div");
-    nodeEl.textContent = node.id;
-    nodeEl.style.color = "#fff";
-    node.color = node.active ? "rgba(255, 100, 100, 1)" : node.color;
-    nodeEl.style.fontFamily = "Verdana";
-    return new THREE.CSS2DObject(nodeEl);
-  })
-  .nodeThreeObjectExtend(true)
-  .linkThreeObjectExtend(true)
-  .linkThreeObject((link) => {
-    // extend link with text sprite
-    const sprite = new SpriteText(`${link.value}`);
-    sprite.color = "lightgrey";
-    sprite.textHeight = 6;
-    return sprite;
-  })
-  .linkPositionUpdate((sprite, { start, end }, link) => {
-    let middlePos = Object.assign(
-      ...["x", "y", "z"].map((c) => ({
+  .linkCanvasObjectMode(() => "after")
+  .linkCanvasObject((link, ctx) => {
+    const start = link.source;
+    const end = link.target;
+
+    // ignore unbound links
+    if (typeof start !== "object" || typeof end !== "object") return;
+
+    // calculate label positioning
+    let textPos = Object.assign(
+      ...["x", "y"].map((c) => ({
         [c]: start[c] + (end[c] - start[c]) / 2, // calc middle point
       }))
     );
-    if (link.curvature === "0.5") {
-      middlePos = Object.assign(
-        ...["x", "y", "z"].map((c) => ({
-          [c]: link.__curve.v1[c], // calc middle point
-        }))
+    if (+link.curvature > 0) {
+      textPos = getQuadraticXY(
+        0.5,
+        start.x,
+        start.y,
+        link.__controlPoints[0],
+        link.__controlPoints[1],
+        end.x,
+        end.y
       );
+      if (+link.curvature === 1) {
+        textPos.x += 26;
+        textPos.y += 9;
+      }
     }
+    const relLink = { x: end.x - start.x, y: end.y - start.y };
 
-    if (link.curvature === "1" || link.curvature === "-1") {
-      middlePos = Object.assign(
-        ...["x", "y", "z"].map((c) => ({
-          [c]:
-            link.__curve.v1[c] + (link.__curve.v2[c] - link.__curve.v1[c]) / 2, // calc middle point
-        }))
-      );
-    }
-    // Position sprite
-    Object.assign(sprite.position, middlePos);
+    let textAngle = Math.atan2(relLink.y, relLink.x);
+    // maintain label vertical orientation for legibility
+    if (textAngle > Math.PI / 2) textAngle = -(Math.PI - textAngle);
+    if (textAngle < -Math.PI / 2) textAngle = -(-Math.PI - textAngle);
+
+    const label = `${link.value}`;
+
+    ctx.font = `8px Sans-Serif`;
+    ctx.save();
+    ctx.translate(textPos.x, textPos.y);
+    ctx.rotate(textAngle);
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "darkgrey";
+    ctx.fillText(label, 0, -10);
+    // ctx.fillText(label, 0, 0);
+
+    ctx.restore();
   });
-
-// Spread nodes a little wider
-Graph.d3Force("charge").strength(-150);
+Graph.d3Force("charge").strength(-200);
 
 document.getElementById("playBtn").addEventListener("click", async (event) => {
   const input = document.getElementById("word");
