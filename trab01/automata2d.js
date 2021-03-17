@@ -4,16 +4,14 @@ fetch("/data.json")
   .then((data) => {
     Graph = ForceGraph()(document.getElementById("graph"))
       .graphData(data)
-      .backgroundColor("#fff")
+      .backgroundColor("#000")
       .nodeId("id")
-      .nodeLabel("id")
       .nodeAutoColorBy("type")
-      .linkColor("rgba(255,255,255,1)")
-      .linkWidth(2)
+      .linkColor(() => "darkgrey")
       .linkSource("source")
       .linkTarget("target")
       .linkCurvature("curvature")
-      // .linkDirectionalParticles(2)
+      // .linkDirectionalParticles(3)
       // .linkDirectionalParticleSpeed(0.005)
       .linkDirectionalArrowLength(6)
       .nodeCanvasObject((node, ctx) => {
@@ -21,7 +19,7 @@ fetch("/data.json")
         ctx.fillStyle = node.color;
         ctx.arc(node.x, node.y, 9, 0, 2 * Math.PI, false);
         ctx.fill();
-        ctx.strokeStyle = "#ffffff";
+        ctx.strokeStyle = "#000";
         ctx.font = "8px Verdana";
         ctx.textAlign = "center";
         ctx.fillStyle = "white";
@@ -30,10 +28,7 @@ fetch("/data.json")
         ctx.stroke();
       })
       .linkCanvasObjectMode(() => "after")
-      .linkCanvasObject((link, ctx, scale) => {
-        const MAX_FONT_SIZE = 8;
-        const LABEL_NODE_MARGIN = Graph.nodeRelSize() * 1.5;
-
+      .linkCanvasObject((link, ctx) => {
         const start = link.source;
         const end = link.target;
 
@@ -46,29 +41,22 @@ fetch("/data.json")
             [c]: start[c] + (end[c] - start[c]) / 2, // calc middle point
           }))
         );
-        if (link.curvature === "0.5") {
-          const c = Math.atan2(
-            start.y + (start.y - end.y) / 2,
-            start.x + (start.x - start.y) / 2
+        if (+link.curvature > 0) {
+          textPos = getQuadraticXY(
+            0.5,
+            start.x,
+            start.y,
+            link.__controlPoints[0],
+            link.__controlPoints[1],
+            end.x,
+            end.y
           );
-          const x = link.curvature * Math.cos(c);
-          const y = link.curvature * Math.sin(c);
-          textPos = { x, y };
+          if (+link.curvature === 1) {
+            textPos.x += 26;
+            textPos.y += 9;
+          }
         }
-
-        if (link.curvature === "1" || link.curvature === "-1") {
-          textPos = Object.assign(
-            ...["x", "y"].map((c) => ({
-              [c]: start[c] + (end[c] - start[c]) / 2, // calc middle point
-            }))
-          );
-        }
-
         const relLink = { x: end.x - start.x, y: end.y - start.y };
-
-        const maxTextLength =
-          Math.sqrt(Math.pow(relLink.x, 2) + Math.pow(relLink.y, 2)) -
-          LABEL_NODE_MARGIN * 2;
 
         let textAngle = Math.atan2(relLink.y, relLink.x);
         // maintain label vertical orientation for legibility
@@ -77,44 +65,20 @@ fetch("/data.json")
 
         const label = `${link.value}`;
 
-        // estimate fontSize to fit in link length
-        ctx.font = "1px Sans-Serif";
-        const fontSize = Math.min(
-          MAX_FONT_SIZE,
-          maxTextLength / ctx.measureText(label).width
-        );
-        ctx.font = `${fontSize}px Sans-Serif`;
-        const textWidth = ctx.measureText(label).width;
-        const bckgDimensions = [textWidth, fontSize].map(
-          (n) => n + fontSize * 0.2
-        ); // some padding
-
-        // draw text label (with background rect)
+        ctx.font = `8px Sans-Serif`;
         ctx.save();
         ctx.translate(textPos.x, textPos.y);
         ctx.rotate(textAngle);
 
-        ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-        ctx.fillRect(
-          -bckgDimensions[0] / 2,
-          -bckgDimensions[1] / 2,
-          ...bckgDimensions
-        );
-
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = "darkgrey";
-        ctx.fillText(
-          label,
-          0,
-          (link.source.x < 0 && link.target.x < 0) ||
-            (link.target.y < 0 && link.target.y < 0)
-            ? -10
-            : 10
-        );
+        ctx.fillText(label, 0, -10);
+        // ctx.fillText(label, 0, 0);
 
         ctx.restore();
       });
+    Graph.d3Force("charge").strength(-200);
   });
 
 document.getElementById("playBtn").addEventListener("click", (event) => {
@@ -125,3 +89,10 @@ document.getElementById("playBtn").addEventListener("click", (event) => {
     console.log(word);
   }
 });
+
+function getQuadraticXY(t, sx, sy, cp1x, cp1y, ex, ey) {
+  return {
+    x: (1 - t) * (1 - t) * sx + 2 * (1 - t) * t * cp1x + t * t * ex,
+    y: (1 - t) * (1 - t) * sy + 2 * (1 - t) * t * cp1y + t * t * ey,
+  };
+}
