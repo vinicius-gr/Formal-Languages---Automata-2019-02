@@ -24,5 +24,5 @@ export const dfaRawData = {
     },
   },
   start: "S0",
-  acceptStates: ["S4"],
+  acceptanceStates: ["S4"],
 };

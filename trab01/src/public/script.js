@@ -12,12 +12,13 @@ Graph = ForceGraph()(document.getElementById("graph"))
   .linkSource("source")
   .linkTarget("target")
   .linkCurvature("curvature")
+  .autoPauseRedraw(false)
   // .linkDirectionalParticles(3)
   // .linkDirectionalParticleSpeed(0.005)
   .linkDirectionalArrowLength(6)
   .nodeCanvasObject((node, ctx) => {
     ctx.beginPath();
-    ctx.fillStyle = node.color;
+    ctx.fillStyle = node.active ? "rgba(255,100,100,1)" : node.color;
     ctx.arc(node.x, node.y, 9, 0, 2 * Math.PI, false);
     ctx.fill();
     ctx.strokeStyle = "#000";
@@ -84,20 +85,41 @@ Graph.d3Force("charge").strength(-200);
 document.getElementById("playBtn").addEventListener("click", async (event) => {
   const input = document.getElementById("word");
   if (input.value !== "") {
+    document.getElementById("resetBtn").disabled = true;
     const DFA = new DeterministcFiniteAutomata(dfaRawData);
     const { nodes, links } = Graph.graphData();
     const currState = { id: "S0", index: 0 };
     nodes[currState.index].active = true;
     Graph.graphData({ nodes, links });
-    Graph.nodeThreeObject(Graph.nodeThreeObject());
     for (let letter of input.value.split("")) {
-      await sleep(2000);
+      await sleep(500);
       const nextState = DFA.move(currState.id, letter);
       currState.id = nextState;
       currState.index = nodes.findIndex((item) => item.id === nextState);
+      nodes.forEach((node) => {
+        node.active = false;
+      });
       nodes[currState.index].active = true;
       Graph.graphData({ nodes, links });
-      Graph.nodeThreeObject(Graph.nodeThreeObject());
     }
+    const header = document.getElementsByTagName("h1")[0];
+    if (DFA.test(input.value)) {
+      header.innerHTML = "CADEIA ACEITA";
+      header.style.color = "lawngreen";
+    } else {
+      header.innerHTML = "CADEIA REJEITADA";
+      header.style.color = "red";
+    }
+    document.getElementById("resetBtn").disabled = false;
   }
+});
+
+document.getElementById("resetBtn").addEventListener("click", async (event) => {
+  const { nodes, links } = Graph.graphData();
+  nodes.forEach((node) => {
+    node.active = false;
+  });
+  header.innerHTML = "";
+  header.style.color = "none";
+  Graph.graphData({ nodes, links });
 });

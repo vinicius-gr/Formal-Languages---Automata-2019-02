@@ -1,10 +1,20 @@
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const treatRawData = ({ states, transitions, alphabet }) => {
-  const treatedNodes = states.map((node, index) => {
+export const treatRawData = ({
+  states,
+  transitions,
+  alphabet,
+  start,
+  acceptanceStates,
+}) => {
+  const treatedNodes = states.map((node) => {
     return {
       id: node,
-      type: index == 0 ? "start" : index == states.length - 1 ? "end" : "",
+      type: start.includes(node)
+        ? "start"
+        : acceptanceStates.includes(node)
+        ? "end"
+        : "",
       active: false,
     };
   });
@@ -12,18 +22,23 @@ export const treatRawData = ({ states, transitions, alphabet }) => {
   const treatedLinks = [];
   for (let state of Object.keys(transitions)) {
     for (let value of Object.keys(state)) {
-      treatedLinks.push({
-        source: state,
-        target: transitions[state][value],
-        value: value,
-        curvature: getCurvature(
-          state,
-          transitions[state][value],
-          transitions,
-          alphabet
-        ),
-        active: false,
-      });
+      if (state === transitions[state][value] && treatedLinks.some((l) => l.source === state && l.target === state)) {
+        const index = treatedLinks.findIndex((l) => l.source === state && l.target === state);
+        treatedLinks[index].value = `${treatedLinks[index].value} | ${value}`;
+      } else {
+        treatedLinks.push({
+          source: state,
+          target: transitions[state][value],
+          value: value,
+          curvature: getCurvature(
+            state,
+            transitions[state][value],
+            transitions,
+            alphabet
+          ),
+          active: false,
+        });
+      }
     }
   }
 
