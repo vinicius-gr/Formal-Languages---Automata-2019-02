@@ -82,6 +82,10 @@ Graph = ForceGraph()(document.getElementById("graph"))
   });
 Graph.d3Force("charge").strength(-200);
 
+console.log("Estados do automato = "+dfaRawData.states)
+console.log("Estado inicial = "+dfaRawData.start)
+console.log("Estado de Aceitação = "+dfaRawData.acceptanceStates)
+
 document.getElementById("playBtn").addEventListener("click", async (event) => {
   const input = document.getElementById("word");
   if (input.value !== "") {
@@ -92,13 +96,14 @@ document.getElementById("playBtn").addEventListener("click", async (event) => {
     nodes[currState.index].active = true;
     Graph.graphData({ nodes, links });
     for (let letter of input.value.split("")) {
-      await sleep(500);
+      await sleep(1000);
       const nextState = DFA.move(currState.id, letter);
+      console.log("\nEstado atual="+currState.id+"\nCaractere a ser consumido="+letter+"\nProximo estado="+nextState);
       currState.id = nextState;
       currState.index = nodes.findIndex((item) => item.id === nextState);
-      nodes.forEach((node) => {
-        node.active = false;
-      });
+      // nodes.forEach((node) => {
+      //   node.active = false;
+      // });
       nodes[currState.index].active = true;
       Graph.graphData({ nodes, links });
     }
