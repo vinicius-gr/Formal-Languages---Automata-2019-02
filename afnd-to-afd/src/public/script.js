@@ -1,11 +1,13 @@
 import NonDeterministcFiniteAutomata from "../automatas/NFA.js";
+import DeterministcFiniteAutomata from "../automatas/DFA.js";
 import toDFA from "../automatas/NFAtoDFA.js";
 import {
   treatRawData,
-  getQuadraticXY
+  getQuadraticXY,
+  sleep
 } from "../utils/index.js";
 
-fetch('../db/NFA.json').then(response => response.json()).then(data => {
+fetch('../db/NFA-2.json').then(response => response.json()).then(data => {
 
   let Graph = {};
   Graph = ForceGraph()(document.getElementById("graph"))
@@ -88,5 +90,15 @@ fetch('../db/NFA.json').then(response => response.json()).then(data => {
 
       ctx.restore();
     });
-    Graph.d3Force("charge").strength(-250);
+  Graph.d3Force("charge").strength(-1000);
+
+  const NFA = new NonDeterministcFiniteAutomata(data.states, data.alphabet, data.transitions, data.start, data.acceptanceStates);
+  const DFA = toDFA(NFA);
+
+
+  sleep(5000).then(() => {
+    Graph.graphData(treatRawData(DFA));
+
   });
+
+});

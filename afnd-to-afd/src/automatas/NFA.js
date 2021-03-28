@@ -2,14 +2,14 @@ export default class NonDeterministcFiniteAutomata {
     constructor(Q, E, D, q0, F) {
         this.states = Q;
         this.alphabet = E;
-        this.transition = D;
+        this.transitions = D;
         this.start = q0;
-        this.accepts = F;
+        this.acceptanceStates = F;
     }
 
     delta(symbol, state) {
-        if (this.transition[state][symbol]) {
-            return this.transition[state][symbol];
+        if (this.transitions[state][symbol]) {
+            return this.transitions[state][symbol];
         }
         return [];
     }
@@ -22,18 +22,18 @@ export default class NonDeterministcFiniteAutomata {
             if (!this.alphabet.includes(symbol)) {
                 return false;
             }
-            if (Array.isArray(this.transition[currentState][symbol])) {
-                this.transition[currentState][symbol].forEach(element => {
-                    currentState = this.transition[element][symbol];
+            if (Array.isArray(this.transitions[currentState][symbol])) {
+                this.transitions[currentState][symbol].forEach(element => {
+                    currentState = this.transitions[element][symbol];
                     visited.add(currentState);
                 });
             } else {
-                currentState = this.transition[currentState][symbol];
+                currentState = this.transitions[currentState][symbol];
             }
             console.log(currentState);
         }
 
-        if (this.accepts.some(s => currentState.includes(s))) {
+        if (this.acceptanceStates.some(s => currentState.includes(s))) {
             return true;
         }
 

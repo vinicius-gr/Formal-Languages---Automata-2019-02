@@ -10,9 +10,7 @@ export const treatRawData = ({
   const treatedNodes = states.map((node) => {
     return {
       id: node,
-      type: start.includes(node) ?
-        "start" : acceptanceStates.includes(node) ?
-        "end" : "",
+      type: start.includes(node) ? "start" : acceptanceStates.includes(node) ? "end" : "",
       active: false,
     };
   });
@@ -21,18 +19,20 @@ export const treatRawData = ({
   for (let state of Object.keys(transitions)) {
     for (let value of Object.keys(state)) {
 
-      if (Array.isArray(transitions[state][value])) {
-        let singleTransition;
-        for (const iterator of transitions[state][value]) {
-          singleTransition = {
-            [state]: {
-              [value]: iterator
+      if (transitions[state][value]) {
+        if (Array.isArray(transitions[state][value])) {
+          let singleTransition;
+          for (const iterator of transitions[state][value]) {
+            singleTransition = {
+              [state]: {
+                [value]: iterator
+              }
             }
+            assembleLinks(treatedLinks, singleTransition, alphabet, state, value, transitions);
           }
-          assembleLinks(treatedLinks, singleTransition, alphabet, state, value, transitions);
+        } else {
+          assembleLinks(treatedLinks, transitions, alphabet, state, value);
         }
-      } else {
-        assembleLinks(treatedLinks, transitions, alphabet, state, value);
       }
     }
   }
@@ -44,15 +44,16 @@ export const treatRawData = ({
 
 function getCurvature(source, target, transitions, alphabet) {
   if (source === target) return 1;
-  else if (alphabet.split("").some((val) =>
-      transitions[target] &&
-      (transitions[target][val] === source || transitions[target][val].includes(source)))) return 0.5;
+  else if (alphabet.split('').some((val) => transitions[target][val] && (transitions[target][val] === source))) return 0.5;
   else return 0;
 }
 
 function assembleLinks(treatedLinks, transitions, alphabet, state, value, allTransitions = transitions) {
   if (state === transitions[state][value] && treatedLinks.some((l) => l.source === state && l.target === state)) {
     const index = treatedLinks.findIndex((l) => l.source === state && l.target === state);
+    treatedLinks[index].value = `${treatedLinks[index].value} | ${value}`;
+  } else if (treatedLinks.some((l) => l.source === state && l.target === transitions[state][value])) {
+    const index = treatedLinks.findIndex((l) => l.source === state && l.target === transitions[state][value]);
     treatedLinks[index].value = `${treatedLinks[index].value} | ${value}`;
   } else {
     treatedLinks.push({

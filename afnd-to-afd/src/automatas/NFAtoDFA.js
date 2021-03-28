@@ -1,51 +1,72 @@
 "use strict";
 
-function getFinalStatesFromNFA(NFA) {
-    return getAllSubsets(NFA.states).filter(v => {
-        for (const state of v) {
-            return NFA.acceptStates.includes(state);
-        }
+import DeterministcFiniteAutomata from "./DFA.js";
+
+function parseNFA({
+    states,
+    alphabet,
+    transitions,
+    start,
+    acceptanceStates
+}) {
+
+    let parsedStates = new Set();
+    let parsedTransitions = {};
+    let parsedacceptanceStates = [];
+    parsedStates.add(start);
+
+    parsedStates.forEach((state) => {
+        alphabet.split('').map((symbol) => {
+            parsedTransitions[state] = parsedTransitions[state] ? parsedTransitions[state] : {};
+
+            if (state.includes('_')) {
+                let set = new Set();
+                state.split('_').forEach(sub_state => {
+                    if (transitions[sub_state][symbol]) {
+                        if (Array.isArray(transitions[sub_state][symbol]))
+                            transitions[sub_state][symbol].map((v) => (set.add(v)));
+                        else
+                            set.add(transitions[sub_state][symbol]);
+                    }
+                });
+                parsedTransitions[state][symbol] = Array.from(set).sort().join('_');
+            } else if (transitions[state][symbol]) {
+                if (Array.isArray(transitions[state][symbol])) {
+                    parsedTransitions[state][symbol] = transitions[state][symbol].join('_');
+                } else {
+                    parsedTransitions[state][symbol] = transitions[state][symbol];
+                }
+            }
+            if (parsedTransitions[state][symbol] && !parsedStates.has(parsedTransitions[state][symbol]))
+                parsedStates.add(parsedTransitions[state][symbol]);
+        });
     });
+
+    parsedStates.forEach((state) => {
+        if (state.includes(acceptanceStates)) parsedacceptanceStates.push(state)
+    });
+
+    return {
+        parsedStates,
+        parsedTransitions,
+        start,
+        parsedacceptanceStates
+    }
 }
 
-function getDeterministicTransitions(NFA) {
-    let transitions = {};
-    let states = [];
-
-    do {
-
-        for (const symbol of NFA.alphabet) {
-            let transition = {};
-            transition[symbol] = [];
-            for (const separateState of stateArray) {
-                transition[symbol] = getETransition(NFA, separateState, symbol).concat(
-                    transition[symbol]
-                );
-            }
-            transitions[stateString][symbol] = removeDuplicateCharacters(
-                transition[symbol]
-                .sort()
-                .toString()
-                .replace(/,/g, "")
-            );
-            if (states.indexOf(transitions[stateString][symbol]) < 0) {
-                newStatesStack.push(transitions[stateString][symbol]);
-            }
-        }
-    } while (newStatesStack.length);
-
-    return transitions;
-}
 
 export default function toDFA(NFA) {
-    debugger
-    let DFA = {
-        states: getAllSubsets(NFA.states).map(v => v.toString().replace(/,/g, "")),
+    const {
+        parsedStates,
+        parsedTransitions,
+        start,
+        parsedacceptanceStates
+    } = parseNFA(NFA);
+    return new DeterministcFiniteAutomata({
+        states: Array.from(parsedStates),
         alphabet: NFA.alphabet,
-        transitions: getDeterministicTransitions(NFA),
-        start: getEClousure(NFA, NFA.start).toString().replace(/,/g, ""),
-        acceptStates: getFinalStatesFromNFA(NFA).map(v => v.toString().replace(/,/g, ""))
-    };
-
-    return DFA;
+        transitions: parsedTransitions,
+        start: start,
+        acceptanceStates: parsedacceptanceStates
+    });
 };
