@@ -85,6 +85,7 @@ Graph.d3Force("charge").strength(-200);
 console.log("Estados do automato = "+dfaRawData.states)
 console.log("Estado inicial = "+dfaRawData.start)
 console.log("Estado de Aceitação = "+dfaRawData.acceptanceStates)
+console.log("Conjunto de transicoes\n"+JSON.stringify(dfaRawData.transitions));
 
 document.getElementById("playBtn").addEventListener("click", async (event) => {
   const input = document.getElementById("word");
