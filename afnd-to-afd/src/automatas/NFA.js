@@ -7,13 +7,6 @@ export default class NonDeterministcFiniteAutomata {
         this.acceptanceStates = F;
     }
 
-    delta(symbol, state) {
-        if (this.transitions[state][symbol]) {
-            return this.transitions[state][symbol];
-        }
-        return [];
-    }
-
     test(word, currentState = this.start, visited = new Set()) {
 
         while (!visited.has(currentState)) {

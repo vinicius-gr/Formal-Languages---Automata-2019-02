@@ -1,5 +1,5 @@
 <head>
-  <!-- <style>
+  <style>
     body {
       margin: 0;
       font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -17,13 +17,7 @@
       right: 5px;
     }
 
-    .play-btn {
-      margin: 8px;
-      height: 25px;
-      width: 150px;
-    }
-
-    .reset-btn {
+    .btn {
       margin: 8px;
       height: 25px;
       width: 75px;
@@ -33,7 +27,7 @@
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
   />
-  3d automata
+  <!--3d automata
     <script src="//unpkg.com/three"></script>
   <script src="//unpkg.com/three/examples/js/renderers/CSS2DRenderer.js"></script>
   <script src="//unpkg.com/three-spritetext"></script>
@@ -42,13 +36,17 @@
 </head>
 
 <body>
-  <div id="3d-graph"></div>
+  <!-- <div id="3d-graph"></div> -->
   <div id="graph"></div>
-  <!-- <h1 id="header" class="animate__animated animate__flash animate__infinite infinite"></h1>
+  <h1
+    id="header"
+    class="animate__animated animate__flash animate__infinite infinite"
+  ></h1>
   <div class="interation">
     <input type="text" name="input" id="word" />
-    <button class="play-btn" id="playBtn">Play</button>
-    <button class="reset-btn" id="resetBtn" disabled>Reset</button>
-  </div> -->
+    <button class="btn" id="playBtn">Play</button>
+    <button class="btn" id="convertBtn">Convert</button>
+    <button class="btn" id="resetBtn" disabled>Reset</button>
+  </div>
   <script type="module" src="./script.js"></script>
 </body>
