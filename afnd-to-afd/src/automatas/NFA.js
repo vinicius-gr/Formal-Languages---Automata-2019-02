@@ -9,7 +9,7 @@ export default class NonDeterministcFiniteAutomata {
 
     test(word, currentState = this.start, visited = new Set()) {
 
-        while (!visited.has(currentState)) {
+        while (!visited.has(currentState) && word.length != 0) {
             const symbol = word[0]
             word = word.slice(1);
             if (!this.alphabet.includes(symbol)) {
