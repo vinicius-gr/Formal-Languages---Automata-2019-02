@@ -24,7 +24,7 @@ fetch("../db/NFA.json")
       .nodeCanvasObject((node, ctx) => {
         ctx.beginPath();
         ctx.fillStyle = node.active ? "rgba(255,100,100,1)" : node.color;
-        ctx.arc(node.x, node.y, 8, 0, 2 * Math.PI, false);
+        ctx.arc(node.x, node.y, 18, 0, 2 * Math.PI, false);
         ctx.fill();
         ctx.strokeStyle = "#000";
         ctx.font = "8px Verdana";
