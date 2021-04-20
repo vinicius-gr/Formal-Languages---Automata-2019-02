@@ -3,7 +3,7 @@ import DeterministcFiniteAutomata from "../automatas/DFA.js";
 import toDFA from "../automatas/NFAtoDFA.js";
 import { treatRawData, getQuadraticXY, sleep } from "../utils/index.js";
 
-fetch("../db/NFA.json")
+fetch("../db/NFA-M.json")
   .then((response) => response.json())
   .then((data) => {
     let Graph = {};
