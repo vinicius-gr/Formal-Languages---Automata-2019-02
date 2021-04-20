@@ -47,11 +47,13 @@ function parseNFA({ states, alphabet, transitions, start, acceptanceStates }) {
         } else {
           parsedTransitions[state][symbol] = transitions[state][symbol];
         }
+      } else {
+        parsedTransitions[state][symbol] = state;
       }
       //adiciona o estado relacionado a transição convertida na lista de estados convertidos
       if (
-        transitions[state] &&
-        transitions[state].hasOwnProperty(symbol) &&
+        parsedTransitions[state] &&
+        parsedTransitions[state].hasOwnProperty(symbol) &&
         parsedTransitions[state][symbol] &&
         !parsedStates.has(parsedTransitions[state][symbol])
       )
