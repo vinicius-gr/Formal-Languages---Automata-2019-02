@@ -134,8 +134,12 @@ fetch("../db/NFA-M.json")
               `\nCaractere a ser consumido=${symbol}\nProximo estado=${currentState}`
             );
             let { nodes, links } = Graph.graphData();
-            nodes[nodes.findIndex((n) => n.id === currentState)].active = true;
-            Graph.graphData({ nodes, links });
+            if (currentState) {
+              nodes[
+                nodes.findIndex((n) => n.id === currentState)
+              ].active = true;
+              Graph.graphData({ nodes, links });
+            }
           }
           const header = document.getElementsByTagName("h1")[0];
           if (NFA.test(input.value)) {
@@ -161,7 +165,7 @@ fetch("../db/NFA-M.json")
           nodes[currState.index].active = true;
           Graph.graphData({ nodes, links });
           for (let letter of input.value.split("")) {
-            await sleep(1000);
+            await sleep(500);
             const nextState = DFA.move(currState.id, letter);
             console.log(
               "\nEstado atual=" +

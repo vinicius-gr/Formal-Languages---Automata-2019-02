@@ -48,7 +48,7 @@ function parseNFA({ states, alphabet, transitions, start, acceptanceStates }) {
           parsedTransitions[state][symbol] = transitions[state][symbol];
         }
       } else {
-        parsedTransitions[state][symbol] = state;
+        parsedTransitions[state][symbol] = "💀💀💀";
       }
       //adiciona o estado relacionado a transição convertida na lista de estados convertidos
       if (
