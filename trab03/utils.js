@@ -5,3 +5,11 @@ export function isLetter(c) {
 export function isOperator(o) {
   return /[+.*]/.test(o);
 }
+
+export const OP_TYPES = {
+  SYMBOL: "symbol",
+  CONCAT: "concat",
+  UNION: "union",
+  KLEENE: "kleene",
+};
+Object.freeze(OP_TYPES);
