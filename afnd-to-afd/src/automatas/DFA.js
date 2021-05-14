@@ -1,4 +1,4 @@
-export class DeterministcFiniteAutomata {
+export default class DeterministcFiniteAutomata {
   constructor({
     states: Q,
     alphabet: E,
@@ -8,16 +8,16 @@ export class DeterministcFiniteAutomata {
   }) {
     this.states = Q;
     this.alphabet = E;
-    this.transition = D;
+    this.transitions = D;
     this.start = q0;
-    this.accepts = F;
+    this.acceptanceStates = F;
   }
 
   move(currentState, input) {
     if (!this.alphabet.includes(input)) {
       return undefined;
     }
-    return this.transition[currentState][input];
+    return this.transitions[currentState][input];
   }
 
   test(w) {
@@ -29,10 +29,10 @@ export class DeterministcFiniteAutomata {
       if (!this.alphabet.includes(c)) {
         return false;
       }
-      currentState = this.transition[currentState][c];
+      currentState = this.transitions[currentState][c];
     }
 
-    if (this.accepts.includes(currentState)) {
+    if (this.acceptanceStates.includes(currentState)) {
       return true;
     }
 

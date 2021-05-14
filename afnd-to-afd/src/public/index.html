@@ -17,13 +17,7 @@
       right: 5px;
     }
 
-    .play-btn {
-      margin: 8px;
-      height: 25px;
-      width: 150px;
-    }
-
-    .reset-btn {
+    .btn {
       margin: 8px;
       height: 25px;
       width: 75px;
@@ -33,12 +27,11 @@
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
   />
-  <!-- 3d automata
+  <!--3d automata
     <script src="//unpkg.com/three"></script>
   <script src="//unpkg.com/three/examples/js/renderers/CSS2DRenderer.js"></script>
   <script src="//unpkg.com/three-spritetext"></script>
-  <script src="//unpkg.com/3d-force-graph"></script> -->
-
+  <script src="//unpkg.com/3d-force-graph"></script>  -->
   <script src="//unpkg.com/force-graph"></script>
 </head>
 
@@ -51,9 +44,9 @@
   ></h1>
   <div class="interation">
     <input type="text" name="input" id="word" />
-    <button class="play-btn" id="playBtn">Play</button>
-    <button class="reset-btn" id="resetBtn" disabled>Reset</button>
+    <button class="btn" id="playBtn">Play</button>
+    <button class="btn" id="convertBtn">Convert</button>
+    <button class="btn" id="resetBtn" disabled>Reset</button>
   </div>
-  <script src="./main.css" type="style"></script>
   <script type="module" src="./script.js"></script>
 </body>

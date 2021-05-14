@@ -1,0 +1,18 @@
+{
+    "states": [
+        "S0",
+        "S1"
+    ],
+    "alphabet": "01",
+    "transitions": {
+        "S0": {
+            "0": ["S0", "S1"],
+            "1": "S1"
+        },
+        "S1": {
+            "1": ["S0", "S1"]
+        }
+    },
+    "start": "S0",
+    "acceptanceStates": ["S1"]
+}
