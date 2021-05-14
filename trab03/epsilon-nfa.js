@@ -1,15 +1,17 @@
 import * as Utils from "./utils.js";
 
-class FiniteAutomataState {
+class FiniteAutomata {
   constructor() {
-    this.next_state = {};
+    this.states = [];
+    this.transitions = {};
+    this.start = "";
+    this.final = "";
   }
 }
 export class EpsilonNFA {
   constructor() {
-    this.transitions = {};
     this.index = -1;
-    this.NFAStack = [];
+    this.alphabet = "";
   }
 
   evalRegex(expressionTree) {
@@ -27,58 +29,79 @@ export class EpsilonNFA {
   }
 
   evalRegexSymbol(et) {
-    let start_state = new FiniteAutomataState();
-    let end_state = new FiniteAutomataState();
+    let nfa = new FiniteAutomata();
 
-    start_state.next_state[et.value] = [end_state];
+    nfa.start = this.indexGenerator();
+    nfa.final = this.indexGenerator();
+    nfa.states.push(nfa.start, nfa.final);
+    if (!this.alphabet.includes(et.value))
+      this.alphabet = this.alphabet.concat(et.value);
 
-    return [start_state, end_state];
+    nfa.transitions[nfa.start] = {
+      [et.value]: nfa.final,
+    };
+    return nfa;
+  }
+
+  evalRegexEpsilon(et) {
+    let nfa = new FiniteAutomata();
+
+    nfa.states.push(this.indexGenerator(), this.indexGenerator());
+    if (!this.alphabet.includes(et.value)) this.alphabet.concat(et.value);
+
+    nfa.transitions[nfa.start] = {
+      ε: nfa.final,
+    };
+    return nfa;
   }
 
   evalRegexConcat(et) {
     let left_nfa = this.evalRegex(et.left);
     let right_nfa = this.evalRegex(et.right);
 
-    left_nfa[1].next_state["ε"] = right_nfa[0];
+    let nfa = new FiniteAutomata();
+    nfa.states.push(...left_nfa.states, ...right_nfa.states);
+    nfa.transitions = { ...left_nfa.transitions, ...right_nfa.transitions };
+    nfa.transitions[left_nfa.final] = { ε: right_nfa.start };
+    nfa.start = left_nfa.start;
+    nfa.final = right_nfa.final;
 
-    return [left_nfa[0], right_nfa[1]];
+    return nfa;
   }
 
   evalRegexUnion(et) {
-    let start_state = new FiniteAutomataState();
-    let end_state = new FiniteAutomataState();
-
+    let nfa = new FiniteAutomata();
     let up_nfa = this.evalRegex(et.left);
     let down_nfa = this.evalRegex(et.right);
 
-    start_state.next_state["ε"] = [up_nfa[0], down_nfa[0]];
-    up_nfa[1].next_state["ε"] = [end_state];
-    down_nfa[1].next_state["ε"] = [end_state];
+    nfa.start = this.indexGenerator();
+    nfa.final = this.indexGenerator();
 
-    return [start_state, end_state];
+    nfa.states.push(...up_nfa.states, ...down_nfa.states);
+    nfa.transitions = { ...up_nfa.transitions, ...down_nfa.transitions };
+
+    nfa.transitions[nfa.start] = { ε: [up_nfa.start, down_nfa.start] };
+    nfa.transitions[nfa.final] = { ε: [up_nfa.final, down_nfa.final] };
+
+    return nfa;
   }
 
   evalRegexKleene(et) {
-    let start_state = new FiniteAutomataState();
-    let end_state = new FiniteAutomataState();
-
+    let nfa = new FiniteAutomata();
     let sub_nfa = this.evalRegex(et.left);
 
-    start_state.next_state["ε"] = [sub_nfa[0], end_state];
-    sub_nfa[1].next_state["ε"] = [sub_nfa[0], end_state];
+    nfa.start = this.indexGenerator();
+    nfa.final = this.indexGenerator();
 
-    return [start_state, end_state];
+    nfa.transitions = { ...sub_nfa.transitions };
+    nfa.transitions[sub_nfa.final] = { ε: sub_nfa.start };
+    nfa.transitions[nfa.start] = { ε: [sub_nfa.start, sub_nfa.final] };
+    nfa.transitions[sub_nfa.final] = { ε: nfa.final };
+
+    return nfa;
   }
 
-  getKey(obj) {
-    return Object.keys(obj)[0];
-  }
-
-  getKeyValue(obj) {
-    return obj[Object.keys(obj)[0]];
-  }
-
-  newState() {
+  indexGenerator() {
     this.index += 1;
     return `S${this.index}`;
   }
