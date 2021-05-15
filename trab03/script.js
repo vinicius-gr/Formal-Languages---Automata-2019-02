@@ -4,7 +4,7 @@ import { EpsilonNFA } from "./epsilon-nfa.js";
 import { treatRawData, getQuadraticXY, sleep } from "./utils/index.js";
 import * as Utils from "./utils/utils.js";
 
-const postRE = shunt.infixToPostfix("a.(a+b)*.b");
+const postRE = shunt.infixToPostfix("a.b.c");
 
 const et = new ExpressionTree().buildTree(postRE);
 const enfa = new EpsilonNFA().evalRegex(et);

@@ -34,20 +34,17 @@ export const treatRawData = ({
             assembleLinks(
               treatedLinks,
               singleTransition,
-              alphabet,
               state,
               value,
               transitions
             );
           }
         } else {
-          assembleLinks(treatedLinks, transitions, alphabet, state, value);
+          assembleLinks(treatedLinks, transitions, state, value);
         }
       }
     }
   }
-  console.log(treatedNodes);
-  console.log(treatedLinks);
   return {
     nodes: treatedNodes,
     links: treatedLinks,
@@ -59,14 +56,7 @@ function getCurvature(source, target) {
   else return 0.3;
 }
 
-function assembleLinks(
-  treatedLinks,
-  transitions,
-  alphabet,
-  state,
-  value,
-  allTransitions = transitions
-) {
+function assembleLinks(treatedLinks, transitions, state, value) {
   if (
     state === transitions[state][value] &&
     treatedLinks.some((l) => l.source === state && l.target === state)
