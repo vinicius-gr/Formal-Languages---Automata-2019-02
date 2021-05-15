@@ -3,8 +3,10 @@ import { ExpressionTree } from "./expression-tree.js";
 import { EpsilonNFA } from "./epsilon-nfa.js";
 import { treatRawData, getQuadraticXY, sleep } from "./utils/index.js";
 import * as Utils from "./utils/utils.js";
+import eNonDeterministcFiniteAutomata from "./automatas/eNFA.js";
 
-const postRE = shunt.infixToPostfix("a.b.c");
+
+const postRE = shunt.infixToPostfix("b.(a)*");
 
 const et = new ExpressionTree().buildTree(postRE);
 const enfa = new EpsilonNFA().evalRegex(et);
@@ -99,55 +101,46 @@ Graph = ForceGraph()(document.getElementById("graph"))
   });
 Graph.d3Force("charge").strength(-300);
 
+const eNFA = new eNonDeterministcFiniteAutomata(
+  enfa.states,
+  enfa.alphabet,
+  enfa.transitions,
+  enfa.start,
+  enfa.final
+);
 document.getElementById("playBtn").addEventListener("click", async () => {
-  //   const input = document.getElementById("word");
-  //   document.getElementById("resetBtn").disabled = true;
-  //   if (input.value !== "") {
-  //     let visited = new Set();
-  //     let currentState = NFA.start;
-  //     let word = input.value;
-  //     let { nodes, links } = Graph.graphData();
-  //     nodes[0].active = true;
-  //     Graph.graphData({ nodes, links });
-  //     while (!visited.has(currentState)) {
-  //       const symbol = word[0];
-  //       word = word.slice(1);
-  //       if (!NFA.alphabet.includes(symbol)) {
-  //         break;
-  //       }
-  //       await sleep(1000);
-  //       console.log(`\nEstado atual=${currentState}`);
-  //       if (Array.isArray(NFA.transitions[currentState][symbol])) {
-  //         NFA.transitions[currentState][symbol].forEach((element) => {
-  //           currentState = NFA.transitions[element][symbol];
-  //           visited.add(currentState);
-  //         });
-  //       } else {
-  //         currentState = NFA.transitions[currentState][symbol];
-  //       }
-  //       console.log(
-  //         `\nCaractere a ser consumido=${symbol}\nProximo estado=${currentState}`
-  //       );
-  //       let { nodes, links } = Graph.graphData();
-  //       if (currentState) {
-  //         nodes[nodes.findIndex((n) => n.id === currentState)].active = true;
-  //         Graph.graphData({ nodes, links });
-  //       }
-  //     }
-  //     const header = document.getElementsByTagName("h1")[0];
-  //     if (NFA.test(input.value)) {
-  //       header.innerHTML = "CADEIA ACEITA";
-  //       header.style.color = "lawngreen";
-  //     } else {
-  //       header.innerHTML = "CADEIA REJEITADA";
-  //       header.style.color = "red";
-  //     }
-  //     document.getElementById("resetBtn").disabled = false;
-  //   } else {
-  //     header.innerHTML = "CADEIA REJEITADA";
-  //     header.style.color = "red";
-  //     document.getElementById("resetBtn").disabled = false;
-  //   }
+    const input = document.getElementById("word");
+    document.getElementById("resetBtn").disabled = true;
+    if (input.value !== "") {
+      let result = eNFA.test(input.value)
+      console.log(result[0])
+      console.log("Visited: \n", result[1])
+      
+      let { nodes, links } = Graph.graphData();
+      nodes[0].active = true;
+      Graph.graphData({ nodes, links });
+      for(const e of result[1]) {
+        for(const state of e ) {
+          await sleep(1000);
+          let { nodes, links } = Graph.graphData();
+          nodes[nodes.findIndex((n) => n.id === state)].active = true;
+          Graph.graphData({ nodes, links });
+        }
+      }
+      const header = document.getElementsByTagName("h1")[0];
+      if (eNFA.test(input.value)[0]) {
+        header.innerHTML = "CADEIA ACEITA";
+        header.style.color = "lawngreen";
+      } else {
+        header.innerHTML = "CADEIA REJEITADA";
+        header.style.color = "red";
+      }
+      document.getElementById("resetBtn").disabled = false;
+    } else {
+      header.innerHTML = "CADEIA REJEITADA";
+      header.style.color = "red";
+      document.getElementById("resetBtn").disabled = false;
+    }
 });
 
 document.getElementById("resetBtn").addEventListener("click", () => {
