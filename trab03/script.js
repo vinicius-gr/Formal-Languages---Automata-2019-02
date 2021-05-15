@@ -118,16 +118,17 @@ document.getElementById("playBtn").addEventListener("click", async () => {
     let { nodes, links } = Graph.graphData();
     nodes[0].active = true;
     Graph.graphData({ nodes, links });
+    
     for (const e of result[1]) {
       for (const state of e) {
-        await sleep(1000);
+        await sleep(500);
         let { nodes, links } = Graph.graphData();
         nodes[nodes.findIndex((n) => n.id === state)].active = true;
         Graph.graphData({ nodes, links });
       }
     }
     const header = document.getElementsByTagName("h1")[0];
-    if (eNFA.test(input.value)[0]) {
+    if (result[0]) {
       header.innerHTML = "CADEIA ACEITA";
       header.style.color = "lawngreen";
     } else {
