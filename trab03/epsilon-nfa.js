@@ -1,7 +1,8 @@
-import * as Utils from "./utils.js";
+import * as Utils from "./utils/utils.js";
 
 class FiniteAutomata {
   constructor() {
+    this.alphabet = "";
     this.states = [];
     this.transitions = {};
     this.start = "";
@@ -11,7 +12,6 @@ class FiniteAutomata {
 export class EpsilonNFA {
   constructor() {
     this.index = -1;
-    this.alphabet = "";
   }
 
   evalRegex(expressionTree) {
@@ -34,8 +34,9 @@ export class EpsilonNFA {
     nfa.start = this.indexGenerator();
     nfa.final = this.indexGenerator();
     nfa.states.push(nfa.start, nfa.final);
-    if (!this.alphabet.includes(et.value))
-      this.alphabet = this.alphabet.concat(et.value);
+
+    if (!nfa.alphabet.includes(et.value))
+      nfa.alphabet = nfa.alphabet.concat(et.value);
 
     nfa.transitions[nfa.start] = {
       [et.value]: nfa.final,
@@ -47,7 +48,7 @@ export class EpsilonNFA {
     let nfa = new FiniteAutomata();
 
     nfa.states.push(this.indexGenerator(), this.indexGenerator());
-    if (!this.alphabet.includes(et.value)) this.alphabet.concat(et.value);
+    if (!nfa.alphabet.includes("ε")) nfa.alphabet = nfa.alphabet.concat("ε");
 
     nfa.transitions[nfa.start] = {
       ε: nfa.final,
@@ -65,7 +66,8 @@ export class EpsilonNFA {
     nfa.transitions[left_nfa.final] = { ε: right_nfa.start };
     nfa.start = left_nfa.start;
     nfa.final = right_nfa.final;
-
+    nfa.alphabet = nfa.alphabet.concat(left_nfa.alphabet, right_nfa.alphabet);
+    nfa.alphabet = nfa.alphabet.concat("ε");
     return nfa;
   }
 
@@ -77,11 +79,16 @@ export class EpsilonNFA {
     nfa.start = this.indexGenerator();
     nfa.final = this.indexGenerator();
 
+    nfa.states.push(nfa.start, nfa.final);
     nfa.states.push(...up_nfa.states, ...down_nfa.states);
     nfa.transitions = { ...up_nfa.transitions, ...down_nfa.transitions };
 
     nfa.transitions[nfa.start] = { ε: [up_nfa.start, down_nfa.start] };
-    nfa.transitions[nfa.final] = { ε: [up_nfa.final, down_nfa.final] };
+    nfa.transitions[up_nfa.final] = { ε: nfa.final };
+    nfa.transitions[down_nfa.final] = { ε: nfa.final };
+
+    nfa.alphabet = nfa.alphabet.concat(up_nfa.alphabet, down_nfa.alphabet);
+    nfa.alphabet = nfa.alphabet.concat("ε");
 
     return nfa;
   }
@@ -93,10 +100,15 @@ export class EpsilonNFA {
     nfa.start = this.indexGenerator();
     nfa.final = this.indexGenerator();
 
+    nfa.states.push(nfa.start, nfa.final);
+    nfa.states.push(...sub_nfa.states);
+
     nfa.transitions = { ...sub_nfa.transitions };
-    nfa.transitions[sub_nfa.final] = { ε: sub_nfa.start };
-    nfa.transitions[nfa.start] = { ε: [sub_nfa.start, sub_nfa.final] };
-    nfa.transitions[sub_nfa.final] = { ε: nfa.final };
+    nfa.transitions[sub_nfa.final] = { ε: [sub_nfa.start, nfa.final] };
+    nfa.transitions[nfa.start] = { ε: [sub_nfa.start, nfa.final] };
+
+    nfa.alphabet = nfa.alphabet.concat(sub_nfa.alphabet);
+    nfa.alphabet = nfa.alphabet.concat("ε");
 
     return nfa;
   }
