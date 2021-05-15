@@ -5,8 +5,7 @@ import { treatRawData, getQuadraticXY, sleep } from "./utils/index.js";
 import * as Utils from "./utils/utils.js";
 import eNonDeterministcFiniteAutomata from "./automatas/eNFA.js";
 
-
-const postRE = shunt.infixToPostfix("b.(a)*");
+const postRE = shunt.infixToPostfix("b.a*");
 
 const et = new ExpressionTree().buildTree(postRE);
 const enfa = new EpsilonNFA().evalRegex(et);
@@ -109,38 +108,38 @@ const eNFA = new eNonDeterministcFiniteAutomata(
   enfa.final
 );
 document.getElementById("playBtn").addEventListener("click", async () => {
-    const input = document.getElementById("word");
-    document.getElementById("resetBtn").disabled = true;
-    if (input.value !== "") {
-      let result = eNFA.test(input.value)
-      console.log(result[0])
-      console.log("Visited: \n", result[1])
-      
-      let { nodes, links } = Graph.graphData();
-      nodes[0].active = true;
-      Graph.graphData({ nodes, links });
-      for(const e of result[1]) {
-        for(const state of e ) {
-          await sleep(1000);
-          let { nodes, links } = Graph.graphData();
-          nodes[nodes.findIndex((n) => n.id === state)].active = true;
-          Graph.graphData({ nodes, links });
-        }
+  const input = document.getElementById("word");
+  document.getElementById("resetBtn").disabled = true;
+  if (input.value !== "") {
+    let result = eNFA.test(input.value);
+    console.log(result[0]);
+    console.log("Visited: \n", result[1]);
+
+    let { nodes, links } = Graph.graphData();
+    nodes[0].active = true;
+    Graph.graphData({ nodes, links });
+    for (const e of result[1]) {
+      for (const state of e) {
+        await sleep(1000);
+        let { nodes, links } = Graph.graphData();
+        nodes[nodes.findIndex((n) => n.id === state)].active = true;
+        Graph.graphData({ nodes, links });
       }
-      const header = document.getElementsByTagName("h1")[0];
-      if (eNFA.test(input.value)[0]) {
-        header.innerHTML = "CADEIA ACEITA";
-        header.style.color = "lawngreen";
-      } else {
-        header.innerHTML = "CADEIA REJEITADA";
-        header.style.color = "red";
-      }
-      document.getElementById("resetBtn").disabled = false;
+    }
+    const header = document.getElementsByTagName("h1")[0];
+    if (eNFA.test(input.value)[0]) {
+      header.innerHTML = "CADEIA ACEITA";
+      header.style.color = "lawngreen";
     } else {
       header.innerHTML = "CADEIA REJEITADA";
       header.style.color = "red";
-      document.getElementById("resetBtn").disabled = false;
     }
+    document.getElementById("resetBtn").disabled = false;
+  } else {
+    header.innerHTML = "CADEIA REJEITADA";
+    header.style.color = "red";
+    document.getElementById("resetBtn").disabled = false;
+  }
 });
 
 document.getElementById("resetBtn").addEventListener("click", () => {

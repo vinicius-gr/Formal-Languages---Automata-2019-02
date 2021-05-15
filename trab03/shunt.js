@@ -2,7 +2,7 @@ import * as Utils from "./utils/utils.js";
 export function infixToPostfix(regexp) {
   let opStack = [];
   let outputQueue = [];
-  let precedence = { "*": 3, "+": 2, ".": 1 };
+  let precedence = { "*": 3, ".": 2, "+": 1 };
 
   regexp.split("").forEach((symbol) => {
     if (Utils.isLetter(symbol)) {
