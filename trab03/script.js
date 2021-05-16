@@ -6,11 +6,12 @@ import * as Utils from "./utils/utils.js";
 import eNonDeterministcFiniteAutomata from "./automatas/eNFA.js";
 
 const postRE = shunt.infixToPostfix("b.a*");
-
+console.log("Expressão pós fixada:", postRE);
 const et = new ExpressionTree().buildTree(postRE);
+console.log("Árvore da expressão:", et);
 const enfa = new EpsilonNFA().evalRegex(et);
 enfa.alphabet = Utils.removeDuplicateCharacters(enfa.alphabet);
-console.log(enfa);
+console.log("ε-AFND:", enfa);
 let Graph = {};
 Graph = ForceGraph()(document.getElementById("graph"))
   .graphData(treatRawData(enfa))
@@ -37,12 +38,6 @@ Graph = ForceGraph()(document.getElementById("graph"))
     ctx.textBaseline = "middle";
     ctx.fillText(node.id, node.x, node.y);
     ctx.stroke();
-  })
-  .nodeColor((node) => {
-    console.log(node);
-    // if (node) node.color = "#b2df8a";
-    // else if (node.start) node.color = "#a6cee3";
-    // else node.color = "#1f78b4";
   })
   .linkCanvasObjectMode(() => "after")
   .linkCanvasObject((link, ctx) => {
@@ -118,7 +113,7 @@ document.getElementById("playBtn").addEventListener("click", async () => {
     let { nodes, links } = Graph.graphData();
     nodes[0].active = true;
     Graph.graphData({ nodes, links });
-    
+
     for (const e of result[1]) {
       for (const state of e) {
         await sleep(500);
