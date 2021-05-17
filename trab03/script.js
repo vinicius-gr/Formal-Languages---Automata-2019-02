@@ -5,7 +5,7 @@ import { treatRawData, getQuadraticXY, sleep } from "./utils/index.js";
 import * as Utils from "./utils/utils.js";
 import eNonDeterministcFiniteAutomata from "./automatas/eNFA.js";
 
-const postRE = shunt.infixToPostfix("b.a*");
+const postRE = shunt.infixToPostfix("a.(a+b)*.b");
 console.log("Expressão pós fixada:", postRE);
 const et = new ExpressionTree().buildTree(postRE);
 console.log("Árvore da expressão:", et);
