@@ -9,6 +9,7 @@ export default class PushdownAutomata {
     this.start = q0;
     this.stackTop = stackTop;
     this.final = F;
+    this.stack = [];
   }
 
   getTransitionsOfChar(symbol, state) {
