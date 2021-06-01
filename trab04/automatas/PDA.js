@@ -1,13 +1,13 @@
 import * as Utils from "../utils/utils.js";
 
 export default class PushdownAutomata {
-  constructor(Q, S, G, D, q0, stackTop, F) {
+  constructor(Q, S, G, D, q0, tos, F) {
     this.states = Q;
     this.inputAlphabet = S;
     this.stackAlphabet = G;
     this.transitions = D;
     this.start = q0;
-    this.stackTop = stackTop;
+    this.tos = tos;
     this.final = F;
     this.stack = [];
   }
