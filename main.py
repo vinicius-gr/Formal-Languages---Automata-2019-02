@@ -183,7 +183,7 @@ def parse_file(filename):
 # Aceite ou não da palavra
 def done():
     if found:
-        print "Uhul! Palavra \"" + start_input + "\" faz parte da linguagem."
+        print "Uhull! Palavra \"" + start_input + "\" faz parte da linguagem."
     else:
         print "Eita! Palavra \"" + start_input + "\" não faz parte da linguagem."
 
