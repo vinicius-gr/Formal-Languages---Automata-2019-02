@@ -1,0 +1,19 @@
+Q R
+a b
+A B Z
+Q
+Z
+
+E
+Q a Z Q AZ
+Q b Z Q BZ
+Q a A Q AA
+Q a B Q AB
+Q b A Q BA
+Q b B Q BB
+Q e Z R Z
+Q e A R A
+Q e B R B
+R a A R e
+R b B R e
+R e Z R e
