@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import os
+import time
 
 start_input = ""  # palavra
 found = 0  # flag caso o AP aceitar a palavra (palavra vazia && pilha vazia) || (palavra vazia && estado final)
@@ -34,6 +35,12 @@ accept_with = ""
 
 # recursivamente gera toda a árvore de possibilidades e termina em caso de sucesso
 def generate(state, input, stack, config):
+    print(
+            "Palavra a ser consumida: "+input
+            +"\nEstado atual: "+state
+            +"\nPilha atual: "+stack+"\n"
+        )
+    time.sleep(1.2)
     global productions
     global found
 
@@ -45,7 +52,8 @@ def generate(state, input, stack, config):
 
     # valida se encontrou a aceitação da palavra
     if is_found(state, input, stack):
-        found = 1  # seta a flag de aceite para que outros nós saibam que já encontramos a solução e finalizem
+        # seta a flag de aceite para que outros nós saibam que já encontramos a solução e finalizem
+        found = 1  
 
         # add configuração de sucesso (caminho)
         accepted_config.extend(config)
@@ -243,6 +251,7 @@ while start_input != "fim":
         done()
     else:
         # printa lista de configurações de aceitação
+        print("Fluxo que aceitou a palavra:\n")
         print_config(accepted_config)
         done()
 
