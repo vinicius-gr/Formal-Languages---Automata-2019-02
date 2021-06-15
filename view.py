@@ -1,8 +1,12 @@
 import pydot
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
- 
-view = "viewBuilder.dot"
+from shutil import copyfile
+
+
+main = "main.dot"
+runtime = "runtime.dot"
+
 string_vazia = 'ε' 
 def get_label(word, stack, newStack):
     if(word == ''):
@@ -17,15 +21,13 @@ def get_label(word, stack, newStack):
 def cria_imagem(image_name):
     image_path = f"{image_name}.png"
  
-    (graph,) = pydot.graph_from_dot_file(view)
+    (graph,) = pydot.graph_from_dot_file(runtime)
     graph.write_png(image_path)
  
     img = mpimg.imread(image_path)
     plt.imshow(img)
     plt.show()
- 
-
-
+    
 # Gera o arquivo necessário para mostrar o automato que está sendo utilizado
 def cria_automato_file(productions, estado_inicial, estado_final): 
     end_state = ''
@@ -41,8 +43,11 @@ def cria_automato_file(productions, estado_inicial, estado_final):
             transicoes += f"\n\t{estado} -> {transicao[3]} [label = \"{get_label(transicao[0],transicao[1],pilha_final)}\"]"
  
     func_transicao = transicoes
- 
-    with open(view, 'r+') as file:
+    # copia()
+    copyfile(main, runtime)
+    
+    with open('runtime.dot', 'r+') as file:
+        
         automato_builder = file.read()
         file.seek(0)
         automato_builder = automato_builder.replace("START_NODE", estado_inicial)
