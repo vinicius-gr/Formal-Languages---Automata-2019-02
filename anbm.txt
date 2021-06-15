@@ -1,0 +1,12 @@
+Q R S
+a b
+A B Z
+Q
+Z
+S
+F
+Q a Z Q AZ
+Q a A Q AA
+Q b A R e
+R b A R e
+R e A S A

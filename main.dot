@@ -1,0 +1,17 @@
+digraph G{
+    rankdir = "LR" // indica pra desenhar o automato da esquerda pra direita
+    size = "24,15" // tamanha da imagem em polegadas
+
+ 
+
+    fake [style=invisible]; // isso aqui é a seta de inicio
+    fake -> START_NODE [style=bold];
+
+ 
+
+    node [shape = doublecircle]; // define o estilo dos nodes abaixo
+    END_NODE;
+    node [shape = circle]; // define o estilo dos nodes abaixo
+    TRANSITIONS
+}
+ 

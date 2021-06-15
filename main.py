@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import time
+import view
 
 start_input = ""  # palavra
 found = 0  # flag caso o AP aceitar a palavra (palavra vazia && pilha vazia) || (palavra vazia && estado final)
@@ -35,8 +36,8 @@ accept_with = ""
 
 # recursivamente gera toda a árvore de possibilidades e termina em caso de sucesso
 def generate(state, input, stack, config):
-    print(
-            "Palavra a ser consumida: "+input
+    print(  "#######################################################\n"
+            +"Palavra a ser consumida: "+input
             +"\nEstado atual: "+state
             +"\nPilha atual: "+stack+"\n"
         )
@@ -85,7 +86,7 @@ def get_moves(state, input, stack, config):
             continue
 
         for j in productions[i]:
-            # print j
+            # print (j
             current = j
             new = []
 
@@ -141,7 +142,7 @@ def is_found(state, input, stack):
 # printa a configuração atual
 def print_config(config):
     for i in config:
-        print i
+        print (i)
 
 
 def parse_file(filename):
@@ -191,9 +192,9 @@ def parse_file(filename):
 # Aceite ou não da palavra
 def done():
     if found:
-        print "Uhull! Palavra \"" + start_input + "\" faz parte da linguagem."
+        print ("Uhull! Palavra \"" + start_input + "\" faz parte da linguagem.")
     else:
-        print "Eita! Palavra \"" + start_input + "\" não faz parte da linguagem."
+        print ("Eita! Palavra \"" + start_input + "\" não faz parte da linguagem.")
 
 def printStatusQuo():
     global productions
@@ -201,11 +202,11 @@ def printStatusQuo():
     global start_stack
     global acceptable_states
     global accept_with
-    print productions
-    print start_state
-    print start_stack
-    print acceptable_states
-    print accept_with
+    print (productions)
+    print (start_state)
+    print (start_stack)
+    print (acceptable_states)
+    print (accept_with)
 
 def convertPDA():
     global productions
@@ -232,22 +233,25 @@ def convertPDA():
         
 # UI
 # Leitura do arquivo
-filename = raw_input("Por favor, entre com o nome do arquivo:\n")
+filename = input("Por favor, entre com o nome do arquivo:\n")
 while not parse_file(filename):
-    print "Arquivo não encontrado!"
-    filename = raw_input("Por favor, entre com o nome do arquivo de novo:\n")
-print "AP construído."
-
-start_input = raw_input("Por favor, digite a palavra:\n")
-print "Conferindo a palavra \"" + start_input + "\" ..."
+    print ("Arquivo não encontrado!")
+    filename = input("Por favor, entre com o nome do arquivo de novo:\n")
+print ("AP construído.")
+view.cria_automato_file(productions, start_state, acceptable_states)
+view.cria_imagem("automato")
+start_input = input("Por favor, digite a palavra:\n")
+print ("Conferindo a palavra \"" + start_input + "\" ...")
 
 while start_input != "fim":
     found = 0
     accepted_config = []
     if start_input == "converter":
         convertPDA()
+        view.cria_automato_file(productions, start_state, acceptable_states)
+        view.cria_imagem("convertido")
     # A mágica comeca aqui!
-    elif not generate(start_state, start_input, start_stack, [(start_state, start_input, start_stack)]):
+    elif not generate(start_state, start_input, start_stack, [(start_state, start_input, acceptable_states)]):
         done()
     else:
         # printa lista de configurações de aceitação
@@ -255,5 +259,5 @@ while start_input != "fim":
         print_config(accepted_config)
         done()
 
-    start_input = raw_input("Digite a próxima palavra, ou \'converter\' or \'fim\' para terminar o programa:\n")
-    print "Conferindo a palavra \"" + start_input + "\" ..."
+    start_input = input("Digite a próxima palavra, ou \'converter\' or \'fim\' para terminar o programa:\n")
+    print ("Conferindo a palavra \"" + start_input + "\" ...")
